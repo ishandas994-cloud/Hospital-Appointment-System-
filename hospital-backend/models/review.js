@@ -1,37 +1,50 @@
 import mongoose from 'mongoose'
 
-// A Slot = one time block a doctor is available on a specific date
-// e.g. Dr. Sharma -> 2024-08-10 -> 09:00 to 09:30
+// A patient can leave ONE review per doctor (enforced by unique index below)
 
-const slotSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
   doctor: {
     type:     mongoose.Schema.Types.ObjectId,
     ref:      'Doctor',
     required: true
   },
-  date: {
-    type:     Date,
+  patient: {
+    type:     mongoose.Schema.Types.ObjectId,
+    ref:      'Patient',
     required: true
   },
-  startTime: {
-    type:     String,   // "09:00"
-    required: true
+  appointment: {
+    type:     mongoose.Schema.Types.ObjectId,
+    ref:      'Appointment',
+    required: true   // Review is only allowed for a completed appointment
   },
-  endTime: {
-    type:     String,   // "09:30"
-    required: true
+  rating: {
+    type:     Number,
+    required: [true, 'Rating is required'],
+    min:      1,
+    max:      5
   },
-  isBooked: {
-    type:    Boolean,
-    default: false      // true when a patient books this slot
-  },
-  isBlocked: {
-    type:    Boolean,
-    default: false      // doctor can manually block a slot (holiday, break)
+  comment: {
+    type:      String,
+    trim:      true,
+    maxlength: 500
   }
 }, { timestamps: true })
 
-// Prevent duplicate slots: same doctor cannot have 2 slots at same date+time
-slotSchema.index({ doctor: 1, date: 1, startTime: 1 }, { unique: true })
+// One patient can review one doctor only once
+reviewSchema.index({ doctor: 1, patient: 1 }, { unique: true })
 
-export default mongoose.model('Slot', slotSchema)
+// After saving a review, auto-update doctor's average rating
+reviewSchema.post('save', async function () {
+  const Doctor = (await import('./Doctor.js')).default
+  const reviews = await this.constructor.find({ doctor: this.doctor })
+
+  const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+
+  await Doctor.findByIdAndUpdate(this.doctor, {
+    rating:       Math.round(avg * 10) / 10,  // round to 1 decimal
+    totalReviews: reviews.length
+  })
+})
+
+export default mongoose.model('Review', reviewSchema)
