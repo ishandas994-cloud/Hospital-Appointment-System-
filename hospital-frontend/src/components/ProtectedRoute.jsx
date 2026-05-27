@@ -1,18 +1,24 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.jsx'
 
-const ProtectedRoute = ({ children, role }) => {
-  const { user, loading } = useAuth();
+// Protects a group of routes by role
+// If not logged in → redirect to /login
+// If wrong role → redirect to their own dashboard
 
-  if (loading) return <h2>Loading...</h2>;
+export default function ProtectedRoute({ role }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />
 
   if (role && user.role !== role) {
-    return <Navigate to="/" replace />;
+    const dashboards = {
+      patient: '/patient/dashboard',
+      doctor:  '/doctor/dashboard',
+      admin:   '/admin/dashboard'
+    }
+    return <Navigate to={dashboards[user.role] || '/'} replace />
   }
 
-  return children;
-};
-
-export default ProtectedRoute;
+  return <Outlet />
+}
