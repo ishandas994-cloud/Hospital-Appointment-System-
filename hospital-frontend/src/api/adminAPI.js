@@ -1,34 +1,9 @@
-import API from "./axios";
+import api from './axios.js'
 
-// Admin Dashboard
-export const getDashboardData = async () => {
-  const response = await API.get("/admin/dashboard");
-  return response.data;
-};
-
-// Get All Users
-export const getAllUsers = async () => {
-  const response = await API.get("/admin/users");
-  return response.data;
-};
-
-// Get All Doctors
-export const getAllDoctorsAdmin = async () => {
-  const response = await API.get("/admin/doctors");
-  return response.data;
-};
-
-// Approve Doctor
-export const approveDoctor = async (doctorId) => {
-  const response = await API.put(
-    `/admin/approve-doctor/${doctorId}`
-  );
-
-  return response.data;
-};
-
-// Get All Appointments
-export const getAllAppointments = async () => {
-  const response = await API.get("/admin/appointments");
-  return response.data;
-};
+export const getDashboardAPI      = ()       => api.get('/admin/dashboard')
+export const getAllUsersAPI        = (params) => api.get('/admin/users', { params })
+export const toggleUserStatusAPI  = (id)     => api.put(`/admin/users/${id}/toggle`)
+export const getPendingDoctorsAPI = ()       => api.get('/admin/doctors/pending')
+export const approveDoctorAPI     = (id)     => api.put(`/admin/doctors/${id}/approve`)
+export const rejectDoctorAPI      = (id)     => api.put(`/admin/doctors/${id}/reject`)
+export const getAllAppointmentsAPI = (params) => api.get('/admin/appointments', { params })
