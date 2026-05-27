@@ -1,35 +1,7 @@
-import API from "./axios";
+import api from './axios.js'
 
-// Book Appointment
-export const bookAppointment = async (appointmentData) => {
-  const response = await API.post(
-    "/appointment/book",
-    appointmentData
-  );
-
-  return response.data;
-};
-
-// Get My Appointments
-export const getMyAppointments = async () => {
-  const response = await API.get("/appointment/my");
-  return response.data;
-};
-
-// Cancel Appointment
-export const cancelAppointment = async (appointmentId) => {
-  const response = await API.put(
-    `/appointment/cancel/${appointmentId}`
-  );
-
-  return response.data;
-};
-
-// Complete Appointment
-export const completeAppointment = async (appointmentId) => {
-  const response = await API.put(
-    `/appointment/complete/${appointmentId}`
-  );
-
-  return response.data;
-};
+export const bookAppointmentAPI       = (data)       => api.post('/appointments', data)
+export const getMyAppointmentsAPI     = ()            => api.get('/appointments/my')
+export const getDoctorAppointmentsAPI = (params)     => api.get('/appointments/doctor', { params })
+export const cancelAppointmentAPI     = (id, data)   => api.put(`/appointments/${id}/cancel`, data)
+export const completeAppointmentAPI   = (id, data)   => api.put(`/appointments/${id}/complete`, data)
