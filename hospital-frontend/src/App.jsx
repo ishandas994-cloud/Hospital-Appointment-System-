@@ -1,72 +1,72 @@
-// import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './context/AuthContext.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Spinner from './components/Spinner.jsx'
 
-// import Navbar from "./components/Navbar";
-// import ProtectedRoute from "./components/ProtectedRoute";
+// Public pages
+import Home           from './pages/Home.jsx'
+import Login          from './pages/auth/Login.jsx'
+import Register       from './pages/auth/Register.jsx'
+import ForgotPassword from './pages/auth/ForgotPassword.jsx'
 
-// // Pages (keep yours, just ensure paths are correct)
-// import Home from "./pages/Home";
-// import Login from "./pages/auth/Login";
-// import Register from "./pages/auth/Register";
+// Patient pages
+import PatientDashboard from './pages/patient/PatientDashboard.jsx'
+import FindDoctors      from './pages/patient/FindDoctors.jsx'
+import BookAppointment  from './pages/patient/BookAppointment.jsx'
+import MyAppointments   from './pages/patient/MyAppointments.jsx'
+import PatientProfile   from './pages/patient/PatientProfile.jsx'
 
-// // Patient
-// import PatientDashboard from "./pages/patient/PatientDashboard";
+// Doctor pages
+import DoctorDashboard    from './pages/doctor/DoctorDashboard.jsx'
+import ManageSlots        from './pages/doctor/ManageSlots.jsx'
+import DoctorAppointments from './pages/doctor/DoctorAppointments.jsx'
+import DoctorProfile      from './pages/doctor/DoctorProfile.jsx'
 
-// // Doctor
-// import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+// Admin pages
+import AdminDashboard  from './pages/admin/AdminDashboard.jsx'
+import ManageDoctors   from './pages/admin/ManageDoctors.jsx'
+import ManageUsers     from './pages/admin/ManageUsers.jsx'
+import AllAppointments from './pages/admin/AllAppointments.jsx'
 
-// // Admin
-// import AdminDashboard from "./pages/admin/AdminDashboard";
+export default function App() {
+  const { loading } = useAuth()
+  if (loading) return <Spinner fullPage />
 
-// const App = () => {
-//   return (
-//     <>
-//       <Navbar />
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/"                element={<Home />} />
+      <Route path="/login"           element={<Login />} />
+      <Route path="/register"        element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
-//       <Routes>
-//         {/* Public */}
-//         <Route path="/" element={<Home />} />
-//         <Route path="/login" element={<Login />} />
-//         <Route path="/register" element={<Register />} />
+      {/* Patient */}
+      <Route path="/patient" element={<ProtectedRoute role="patient" />}>
+        <Route path="dashboard"      element={<PatientDashboard />} />
+        <Route path="doctors"        element={<FindDoctors />} />
+        <Route path="book/:doctorId" element={<BookAppointment />} />
+        <Route path="appointments"   element={<MyAppointments />} />
+        <Route path="profile"        element={<PatientProfile />} />
+      </Route>
 
-//         {/* Patient */}
-//         <Route
-//           path="/patient/dashboard"
-//           element={
-//             <ProtectedRoute role="patient">
-//               <PatientDashboard />
-//             </ProtectedRoute>
-//           }
-//         />
+      {/* Doctor */}
+      <Route path="/doctor" element={<ProtectedRoute role="doctor" />}>
+        <Route path="dashboard"    element={<DoctorDashboard />} />
+        <Route path="slots"        element={<ManageSlots />} />
+        <Route path="appointments" element={<DoctorAppointments />} />
+        <Route path="profile"      element={<DoctorProfile />} />
+      </Route>
 
-//         {/* Doctor */}
-//         <Route
-//           path="/doctor/dashboard"
-//           element={
-//             <ProtectedRoute role="doctor">
-//               <DoctorDashboard />
-//             </ProtectedRoute>
-//           }
-//         />
+      {/* Admin */}
+      <Route path="/admin" element={<ProtectedRoute role="admin" />}>
+        <Route path="dashboard"    element={<AdminDashboard />} />
+        <Route path="doctors"      element={<ManageDoctors />} />
+        <Route path="users"        element={<ManageUsers />} />
+        <Route path="appointments" element={<AllAppointments />} />
+      </Route>
 
-//         {/* Admin */}
-//         <Route
-//           path="/admin/dashboard"
-//           element={
-//             <ProtectedRoute role="admin">
-//               <AdminDashboard />
-//             </ProtectedRoute>
-//           }
-//         />
-//       </Routes>
-//     </>
-//   );
-// };
-
-// export default App;
-
-
-const App = () => {
-  return <h1 style={{ color: "green" }}>APP IS WORKING</h1>;
-};
-
-export default App;
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}
