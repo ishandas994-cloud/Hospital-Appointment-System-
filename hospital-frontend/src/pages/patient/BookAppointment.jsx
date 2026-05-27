@@ -1,146 +1,174 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { getDoctorByIdAPI, getDoctorSlotsAPI } from '../../api/doctorAPI.js'
+import { bookAppointmentAPI } from '../../api/appointmentAPI.js'
+import Navbar from '../../components/Navbar.jsx'
+import Spinner from '../../components/Spinner.jsx'
+import toast from 'react-hot-toast'
+import { format, addDays } from 'date-fns'
 
-import {
-  useParams,
-  useNavigate,
-} from "react-router-dom";
+export default function BookAppointment() {
+  const { doctorId } = useParams()
+  const navigate     = useNavigate()
 
-import {
-  getDoctorById,
-  getDoctorSlots,
-} from "../../api/doctorAPI";
+  const [doctor,       setDoctor]       = useState(null)
+  const [slots,        setSlots]        = useState([])
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [selectedSlot, setSelectedSlot] = useState(null)
+  const [reason,       setReason]       = useState('')
+  const [loading,      setLoading]      = useState(true)
+  const [slotsLoading, setSlotsLoading] = useState(false)
+  const [booking,      setBooking]      = useState(false)
 
-import { bookAppointment } from "../../api/appointmentAPI";
+  // Generate next 7 days
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = addDays(new Date(), i)
+    return {
+      label: format(d, 'EEE dd'),
+      value: format(d, 'yyyy-MM-dd')
+    }
+  })
 
-import Spinner from "../../components/Spinner";
-
-const BookAppointment = () => {
-  const { id } = useParams();
-
-  const navigate = useNavigate();
-
-  const [doctor, setDoctor] =
-    useState(null);
-
-  const [slots, setSlots] =
-    useState([]);
-
-  const [selectedSlot, setSelectedSlot] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(true);
-
+  // Fetch doctor info on mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const doctorData =
-          await getDoctorById(id);
+    getDoctorByIdAPI(doctorId)
+      .then(r => setDoctor(r.data.doctor))
+      .catch(() => toast.error('Doctor not found'))
+      .finally(() => setLoading(false))
+  }, [doctorId])
 
-        const slotsData =
-          await getDoctorSlots(id);
+  // Fetch slots when date changes
+  useEffect(() => {
+    setSlotsLoading(true)
+    setSelectedSlot(null)
+    getDoctorSlotsAPI(doctorId, selectedDate)
+      .then(r => setSlots(r.data.slots || []))
+      .catch(() => setSlots([]))
+      .finally(() => setSlotsLoading(false))
+  }, [doctorId, selectedDate])
 
-        setDoctor(
-          doctorData.doctor
-        );
+  const handleBook = async () => {
+    if (!selectedSlot)    return toast.error('Please select a time slot')
+    if (!reason.trim())   return toast.error('Please enter reason for visit')
 
-        setSlots(
-          slotsData.slots || []
-        );
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setBooking(true)
+    try {
+      await bookAppointmentAPI({ doctorId, slotId: selectedSlot, reason })
+      toast.success('Appointment booked successfully!')
+      navigate('/patient/appointments')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Booking failed')
+    } finally {
+      setBooking(false)
+    }
+  }
 
-    fetchData();
-  }, [id]);
-
-  const handleBooking =
-    async () => {
-      if (!selectedSlot) {
-        return alert(
-          "Please select a slot"
-        );
-      }
-
-      try {
-        await bookAppointment({
-          doctorId: id,
-          slot: selectedSlot,
-        });
-
-        alert(
-          "Appointment Booked"
-        );
-
-        navigate(
-          "/patient/appointments"
-        );
-      } catch (error) {
-        console.log(error);
-
-        alert(
-          error.response?.data
-            ?.message ||
-            "Booking Failed"
-        );
-      }
-    };
-
-  if (loading) return <Spinner />;
+  if (loading) return <><Navbar /><Spinner fullPage /></>
 
   return (
-    <div className="page-container">
-      <h1>Book Appointment</h1>
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h1 className="font-display text-2xl font-bold text-slate-800 mb-6">
+          Book Appointment
+        </h1>
 
-      <div className="book-card">
-        <h2>
-          Dr. {doctor?.name}
-        </h2>
+        {/* Doctor info card */}
+        {doctor && (
+          <div className="card mb-6 flex items-center gap-4">
+            <div className="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              {doctor.user?.profilePhoto ? (
+                <img src={doctor.user.profilePhoto} className="w-14 h-14 rounded-2xl object-cover" />
+              ) : (
+                <span className="text-2xl font-bold text-primary-700">
+                  {doctor.user?.name?.charAt(0)}
+                </span>
+              )}
+            </div>
+            <div>
+              <h2 className="font-display font-semibold text-slate-800">
+                Dr. {doctor.user?.name}
+              </h2>
+              <p className="text-sm text-primary-600">{doctor.specialization}</p>
+              <p className="text-sm text-slate-500">
+                ₹{doctor.consultationFee} consultation fee
+              </p>
+            </div>
+          </div>
+        )}
 
-        <p>
-          {
-            doctor?.specialization
-          }
-        </p>
+        {/* Step 1 — Select Date */}
+        <div className="card mb-4">
+          <h3 className="font-semibold text-slate-700 mb-3">
+            Step 1 — Select Date
+          </h3>
+          <div className="flex gap-2 flex-wrap">
+            {days.map(d => (
+              <button
+                key={d.value}
+                onClick={() => setSelectedDate(d.value)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  selectedDate === d.value
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <h3>Select Slot</h3>
+        {/* Step 2 — Select Time Slot */}
+        <div className="card mb-4">
+          <h3 className="font-semibold text-slate-700 mb-3">
+            Step 2 — Select Time Slot
+          </h3>
+          {slotsLoading ? <Spinner /> : slots.length === 0 ? (
+            <p className="text-sm text-slate-500 py-4 text-center">
+              No available slots for this date
+            </p>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {slots.map(slot => (
+                <button
+                  key={slot._id}
+                  onClick={() => setSelectedSlot(slot._id)}
+                  className={`py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                    selectedSlot === slot._id
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-primary-50 hover:text-primary-700'
+                  }`}
+                >
+                  {slot.startTime}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
-        <div className="slots-grid">
-          {slots.map((slot) => (
-            <button
-              key={slot._id}
-              className={
-                selectedSlot ===
-                slot.time
-                  ? "active-slot"
-                  : ""
-              }
-              onClick={() =>
-                setSelectedSlot(
-                  slot.time
-                )
-              }
-            >
-              {slot.time}
-            </button>
-          ))}
+        {/* Step 3 — Reason */}
+        <div className="card mb-6">
+          <h3 className="font-semibold text-slate-700 mb-3">
+            Step 3 — Reason for Visit
+          </h3>
+          <textarea
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+            placeholder="Describe your symptoms or reason for this appointment..."
+            rows={3}
+            className="input resize-none"
+          />
         </div>
 
         <button
-          className="book-btn"
-          onClick={handleBooking}
+          onClick={handleBook}
+          disabled={booking || !selectedSlot}
+          className="btn-primary w-full py-3 text-base"
         >
-          Confirm Booking
+          {booking ? 'Booking...' : 'Confirm Appointment'}
         </button>
       </div>
     </div>
-  );
-};
-
-export default BookAppointment;
+  )
+}
