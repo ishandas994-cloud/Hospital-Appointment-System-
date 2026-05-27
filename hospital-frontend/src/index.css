@@ -1,28 +1,43 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', sans-serif;
+  }
 }
 
-body {
-  background: #f3f4f6;
-}
-
-/* Navbar spacing fix */
-nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-/* Basic link style */
-a {
-  text-decoration: none;
-  color: white;
-}
-
-/* Button default */
-button {
-  cursor: pointer;
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-5 py-2.5 rounded-xl font-semibold
+           hover:bg-primary-700 transition-all duration-200 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply border-2 border-primary-600 text-primary-600 px-5 py-2.5 rounded-xl
+           font-semibold hover:bg-primary-50 transition-all duration-200 active:scale-95;
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white px-5 py-2.5 rounded-xl font-semibold
+           hover:bg-red-600 transition-all duration-200 active:scale-95;
+  }
+  .input {
+    @apply w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           bg-white placeholder-slate-400 transition-all duration-200;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
+  }
+  .badge-pending   { @apply bg-yellow-100 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full; }
+  .badge-confirmed { @apply bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full; }
+  .badge-completed { @apply bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full; }
+  .badge-cancelled { @apply bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full; }
 }
