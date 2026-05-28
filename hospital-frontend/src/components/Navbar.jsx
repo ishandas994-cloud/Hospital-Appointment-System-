@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { logoutAPI } from '../api/authAPI.js'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
+import React from "react";
 
 export default function Navbar() {
   const { user, logout } = useAuth()
