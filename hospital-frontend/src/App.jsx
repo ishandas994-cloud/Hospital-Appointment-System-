@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Spinner from './components/Spinner.jsx'
-
+import React from "react";
 // Public pages
 import Home           from './pages/Home.jsx'
 import Login          from './pages/auth/Login.jsx'

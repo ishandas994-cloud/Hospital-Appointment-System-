@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Navbar from '../components/Navbar.jsx'
-
+import React from "react";
 const specializations = [
   'Cardiologist',
   'Dermatologist',
