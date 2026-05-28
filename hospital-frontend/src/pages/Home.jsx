@@ -132,12 +132,36 @@ export default function Home() {
     </div>
   )
 }
+// // import React from "react";
+
+// // export default function Home() {
+// //   return (
+// //     <div>
+// //       <h1>HOME PAGE WORKING</h1>
+// //     </div>
+// //   );
+// // }
+// import React from "react";
+
+// export default function Home() {
+//   return (
+//     <div className="p-10">
+//       <h1 className="text-4xl font-bold text-black">
+//         Home Page Working
+//       </h1>
+
+//       <button className="btn-primary mt-5">
+//         Button Working
+//       </button>
+//     </div>
+//   );
+// }
 // import React from "react";
 
 // export default function Home() {
 //   return (
 //     <div>
-//       <h1>HOME PAGE WORKING</h1>
+//       <h1>HOME PAGE</h1>
 //     </div>
 //   );
 // }
