@@ -1,14 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Navbar from '../components/Navbar.jsx'
-import React from "react";
+
 const specializations = [
-  'Cardiologist',
-  'Dermatologist',
-  'Neurologist',
-  'Orthopedic',
-  'Pediatrician',
-  'General Physician'
+  'Cardiologist', 'Dermatologist', 'Neurologist',
+  'Orthopedic', 'Pediatrician', 'General Physician'
 ]
 
 const steps = [
@@ -42,15 +38,24 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             {dashboardLink ? (
-              <Link to={dashboardLink} className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all">
+              <Link
+                to={dashboardLink}
+                className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all"
+              >
                 Go to Dashboard
               </Link>
             ) : (
               <>
-                <Link to="/register" className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all">
+                <Link
+                  to="/register"
+                  className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all"
+                >
                   Get Started Free
                 </Link>
-                <Link to="/login" className="border-2 border-white/50 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-white/10 transition-all">
+                <Link
+                  to="/login"
+                  className="border-2 border-white/50 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-white/10 transition-all"
+                >
                   Sign In
                 </Link>
               </>
@@ -119,7 +124,10 @@ export default function Home() {
           <p className="text-primary-100 mb-8">
             Join thousands of patients who trust MediCare for their healthcare needs.
           </p>
-          <Link to="/register" className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all inline-block">
+          <Link
+            to="/register"
+            className="bg-white text-primary-700 font-bold px-8 py-3.5 rounded-xl hover:bg-primary-50 transition-all inline-block"
+          >
             Create Free Account
           </Link>
         </div>
@@ -132,36 +140,3 @@ export default function Home() {
     </div>
   )
 }
-// // import React from "react";
-
-// // export default function Home() {
-// //   return (
-// //     <div>
-// //       <h1>HOME PAGE WORKING</h1>
-// //     </div>
-// //   );
-// // }
-// import React from "react";
-
-// export default function Home() {
-//   return (
-//     <div className="p-10">
-//       <h1 className="text-4xl font-bold text-black">
-//         Home Page Working
-//       </h1>
-
-//       <button className="btn-primary mt-5">
-//         Button Working
-//       </button>
-//     </div>
-//   );
-// }
-// import React from "react";
-
-// export default function Home() {
-//   return (
-//     <div>
-//       <h1>HOME PAGE</h1>
-//     </div>
-//   );
-// }
