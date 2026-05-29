@@ -20,11 +20,23 @@ dotenv.config()
 
 const app = express()
 
-// ── Security headers (helmet) ─────────────────────
-app.use(helmet())
+// ── CORS — must be BEFORE helmet and everything else ──
+app.use(cors({
+  origin:      process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+  methods:     ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
-// ── CORS ──────────────────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
+// Handle preflight requests
+app.options('*', cors())
+
+// ── Helmet — with relaxed settings for development ──
+app.use(helmet({
+  crossOriginResourcePolicy:  { policy: 'cross-origin' },
+  crossOriginOpenerPolicy:    { policy: 'unsafe-none' },
+  contentSecurityPolicy:      false,
+}))
 
 // ── Body parsers ──────────────────────────────────
 app.use(express.json())
@@ -34,7 +46,6 @@ app.use(cookieParser())
 app.use(morgan('dev'))
 
 // ── Global rate limiter ───────────────────────────
-// Max 100 requests per 15 min per IP (all routes)
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max:      100,
@@ -43,7 +54,6 @@ const globalLimiter = rateLimit({
 app.use(globalLimiter)
 
 // ── Strict limiter for auth routes ────────────────
-// Max 10 login/register attempts per 15 min (brute force protection)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max:      10,

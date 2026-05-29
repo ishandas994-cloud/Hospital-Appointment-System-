@@ -5,14 +5,12 @@ const axiosInstance = axios.create({
   withCredentials: true,
 })
 
-// Attach token to every request automatically
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
-// Global response error handler
 axiosInstance.interceptors.response.use(
   (res) => res,
   (error) => {
