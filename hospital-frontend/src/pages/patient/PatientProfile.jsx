@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getPatientProfileAPI, updatePatientProfileAPI } from '../../api/patientAPI.js'
