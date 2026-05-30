@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { createSlotsAPI, getDoctorSlotsAPI } from '../../api/doctorAPI.js'
 import { useAuth } from '../../context/AuthContext.jsx'
