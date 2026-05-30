@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getAllDoctorsAPI } from '../../api/doctorAPI.js'
