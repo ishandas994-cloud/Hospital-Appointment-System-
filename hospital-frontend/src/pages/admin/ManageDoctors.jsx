@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { getPendingDoctorsAPI, approveDoctorAPI, rejectDoctorAPI } from '../../api/adminAPI.js'
 import { getAllDoctorsAPI } from '../../api/doctorAPI.js'
