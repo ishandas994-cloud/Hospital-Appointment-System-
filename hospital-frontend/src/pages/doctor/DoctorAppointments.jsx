@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { getDoctorAppointmentsAPI, cancelAppointmentAPI, completeAppointmentAPI } from '../../api/appointmentAPI.js'
 import Navbar from '../../components/Navbar.jsx'
