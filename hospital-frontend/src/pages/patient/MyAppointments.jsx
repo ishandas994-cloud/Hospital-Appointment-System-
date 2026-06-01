@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { getMyAppointmentsAPI, cancelAppointmentAPI } from '../../api/appointmentAPI.js'
 import { createReviewAPI } from '../../api/patientAPI.js'
